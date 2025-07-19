@@ -5,8 +5,8 @@ This project contains APIs for managing patients and staff with a PostgreSQL dat
 1. Download and install Docker Desktop
 2. Verify Installation 
 3. Open Terminal and check:
-      docker --version
-      docker-compose --version
+      `docker --version`
+      `docker-compose --version`
 4. To run the database use the command below:
 docker-compose up -d
 ### Run the project using the command below
