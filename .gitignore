@@ -31,3 +31,41 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Maven build files
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+
+# IDE files
+.idea/
+*.iml
+*.ipr
+*.iws
+*.classpath
+*.project
+*.settings/
+
+
+# IntelliJ IDEA
+out/
+
+# Logs
+*.log
+*.log.*
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# Java specific
+*.class
+*.jar
+*.war
+*.ear
+
+# Temporary files
+*.swp
+*~
