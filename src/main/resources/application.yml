@@ -1,6 +1,6 @@
 spring:
   application:
-    name: my-health-app
+    name: healthcare-service
   datasource:
     url: jdbc:postgresql://localhost:5432/healthcare
     username: admin

@@ -8,10 +8,10 @@
 		<version>3.5.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.healthcare</groupId>
-	<artifactId>my-health-app</artifactId>
+	<groupId>com.healthapp</groupId>
+	<artifactId>healthcare-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>my-health-app</name>
+	<name>healthcare-service</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>

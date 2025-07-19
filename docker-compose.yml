@@ -2,7 +2,7 @@ version: "3.9"
 services:
   postgres:
     image: postgres:15
-    container_name: my_health_app_db
+    container_name: healthcare_db
     environment:
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin123

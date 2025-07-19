@@ -1,10 +1,10 @@
-package com.healthcare.my_health_app;
+package com.healthapp.healthcare_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MyHealthAppApplicationTests {
+class HealthcareServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
