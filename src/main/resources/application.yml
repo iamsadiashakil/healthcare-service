@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: my-health-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/healthcare
+    username: admin
+    password: admin123
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+server:
+  port: 8080
