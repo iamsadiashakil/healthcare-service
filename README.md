@@ -17,6 +17,7 @@ docker-compose up -d
 mvn spring-boot:run
 ```
 5. If you shut down the project.
+
    i. Stop DB:
       ```
       docker-compose down
