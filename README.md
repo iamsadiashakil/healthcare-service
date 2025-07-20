@@ -24,6 +24,5 @@ mvn spring-boot:run
       ```
    ii. Remove all containers and volumes (reset DB):
 
-       ``` 
        docker-compose down -v
-       ```
+       
