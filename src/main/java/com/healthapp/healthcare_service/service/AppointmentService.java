@@ -4,6 +4,7 @@ import com.healthapp.healthcare_service.dto.AppointmentDTO;
 import com.healthapp.healthcare_service.entity.Appointment;
 import com.healthapp.healthcare_service.entity.Doctor;
 import com.healthapp.healthcare_service.entity.Patient;
+import com.healthapp.healthcare_service.exception.ResourceNotFoundException;
 import com.healthapp.healthcare_service.mapper.AppointmentMapper;
 import com.healthapp.healthcare_service.repository.AppointmentRepository;
 import com.healthapp.healthcare_service.repository.DoctorRepository;
@@ -28,31 +29,33 @@ public class AppointmentService {
                 .toList();
     }
 
-    public Appointment findById(Long id) {
+    public AppointmentDTO findById(Long id) {
+        Appointment appointment = getById(id);
+        return appointmentMapper.toDTO(appointment);
+    }
+
+    public AppointmentDTO save(AppointmentDTO appointmentDTO) {
+        Patient patient = patientRepository.findById(appointmentDTO.getPatientId())
+                .orElseThrow(() -> new RuntimeException("Patient not found"));
+        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
+                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+        Appointment appointment = appointmentMapper.toEntity(appointmentDTO);
+        appointment.setPatient(patient);
+        appointment.setDoctor(doctor);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        return appointmentMapper.toDTO(savedAppointment);
+    }
+
+    public AppointmentDTO update(Long id, AppointmentDTO updatedAppointment) {
+        getById(id);
+        return save(updatedAppointment);
+    }
+
+    private Appointment getById(Long id) {
         return appointmentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Appointment not found with id " + id));
-    }
-
-    public Appointment save(AppointmentDTO appointmentDTO) {
-        Patient patient = patientRepository.findById(appointmentDTO.getPatient().getId())
-                .orElseThrow(() -> new RuntimeException("Patient not found with id " + appointmentDTO.getPatient().getId()));
-        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctor().getId())
-                .orElseThrow(() -> new RuntimeException("Doctor not found with id " + appointmentDTO.getDoctor().getId()));
-
-        Appointment appointment = Appointment.builder()
-                .status(appointmentDTO.getStatus())
-                .appointmentDate(appointmentDTO.getAppointmentDate())
-                .doctor(doctor)
-                .patient(patient)
-                .build();
-        return appointmentRepository.save(appointment);
-    }
-
-    public Appointment update(Long id, AppointmentDTO updatedAppointment) {
-        Appointment existing = findById(id);
-        existing.setAppointmentDate(updatedAppointment.getAppointmentDate());
-        existing.setStatus(updatedAppointment.getStatus());
-        return appointmentRepository.save(existing);
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment not found with id " + id));
     }
 
     public void delete(Long id) {

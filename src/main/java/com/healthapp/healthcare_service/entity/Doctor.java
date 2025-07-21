@@ -25,7 +25,13 @@ public class Doctor {
     private String phone;
 
     @Column(name = "created_at", updatable = false)
-    @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = LocalDateTime.now();
+        }
+    }
 }
 

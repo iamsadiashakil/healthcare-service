@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -26,4 +27,5 @@ public class PatientDTO {
     @NotBlank(message = "Phone number is required")
     @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")
     private String phone;
+    private LocalDateTime createdAt;
 }

@@ -1,7 +1,6 @@
 package com.healthapp.healthcare_service.controller;
 
 import com.healthapp.healthcare_service.dto.PatientDTO;
-import com.healthapp.healthcare_service.entity.Patient;
 import com.healthapp.healthcare_service.service.PatientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,30 +11,27 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/patients")
+@RequiredArgsConstructor
 public class PatientController {
     private final PatientService patientService;
 
-    public PatientController(PatientService patientService) {
-        this.patientService = patientService;
-    }
-
     @PostMapping
-    public ResponseEntity<Patient> createPatient(@Valid @RequestBody PatientDTO dto) {
+    public ResponseEntity<PatientDTO> createPatient(@Valid @RequestBody PatientDTO dto) {
         return ResponseEntity.ok(patientService.createPatient(dto));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatient(@PathVariable Long id) {
+    public ResponseEntity<PatientDTO> getPatient(@PathVariable Long id) {
         return ResponseEntity.ok(patientService.getPatient(id));
     }
 
     @GetMapping
-    public ResponseEntity<List<Patient>> getAllPatients() {
+    public ResponseEntity<List<PatientDTO>> getAllPatients() {
         return ResponseEntity.ok(patientService.getAllPatients());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientDTO dto) {
+    public ResponseEntity<PatientDTO> updatePatient(@PathVariable Long id, @Valid @RequestBody PatientDTO dto) {
         return ResponseEntity.ok(patientService.updatePatient(id, dto));
     }
 

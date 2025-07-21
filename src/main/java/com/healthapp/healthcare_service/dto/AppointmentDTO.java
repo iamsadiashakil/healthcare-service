@@ -12,9 +12,11 @@ import java.time.LocalDateTime;
 public class AppointmentDTO {
     private Long id;
 
-    private PatientDTO patient;
+    @NotNull(message = "Patient ID is required")
+    private Long patientId;
 
-    private DoctorDTO doctor;
+    @NotNull(message = "Doctor ID is required")
+    private Long doctorId;
 
     @NotNull(message = "Appointment date is required")
     @Future(message = "Appointment date must be in the future")
@@ -23,4 +25,6 @@ public class AppointmentDTO {
     @NotBlank(message = "Status is required")
     @Pattern(regexp = "SCHEDULED|COMPLETED|CANCELLED", message = "Status must be SCHEDULED, COMPLETED, or CANCELLED")
     private String status;
+
+    private LocalDateTime createdAt;
 }

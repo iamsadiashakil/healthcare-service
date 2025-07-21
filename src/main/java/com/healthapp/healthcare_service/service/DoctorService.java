@@ -2,6 +2,8 @@ package com.healthapp.healthcare_service.service;
 
 import com.healthapp.healthcare_service.dto.DoctorDTO;
 import com.healthapp.healthcare_service.entity.Doctor;
+import com.healthapp.healthcare_service.exception.ResourceNotFoundException;
+import com.healthapp.healthcare_service.mapper.DoctorMapper;
 import com.healthapp.healthcare_service.repository.DoctorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,31 +14,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorService {
     private final DoctorRepository doctorRepository;
+    private final DoctorMapper doctorMapper;
 
-    public List<Doctor> findAll() {
-        return doctorRepository.findAll();
+    public List<DoctorDTO> findAll() {
+        List<Doctor> doctors = doctorRepository.findAll();
+        return doctors.stream()
+                .map(doctorMapper::toDTO)
+                .toList();
     }
 
-    public Doctor findById(Long id) {
+    public DoctorDTO findById(Long id) {
+        Doctor doctor = getDoctor(id);
+        return doctorMapper.toDTO(doctor);
+    }
+
+    private Doctor getDoctor(Long id) {
         return doctorRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Doctor not found with id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Doctor not found with id " + id));
     }
 
-    public Doctor save(DoctorDTO doctorDTO) {
-        Doctor doctor = Doctor.builder()
-                .name(doctorDTO.getName())
-                .phone(doctorDTO.getPhone())
-                .specialization(doctorDTO.getSpecialization())
-                .build();
-        return doctorRepository.save(doctor);
+    public DoctorDTO save(DoctorDTO doctorDTO) {
+        Doctor doctor = doctorMapper.toEntity(doctorDTO);
+        Doctor savedDoctor = doctorRepository.save(doctor);
+        return doctorMapper.toDTO(savedDoctor);
     }
 
-    public Doctor update(Long id, DoctorDTO updatedDoctor) {
-        Doctor existing = findById(id);
-        existing.setName(updatedDoctor.getName());
-        existing.setSpecialization(updatedDoctor.getSpecialization());
-        existing.setPhone(updatedDoctor.getPhone());
-        return doctorRepository.save(existing);
+    public DoctorDTO update(Long id, DoctorDTO updatedDoctor) {
+        findById(id);
+        return save(updatedDoctor);
     }
 
     public void delete(Long id) {
