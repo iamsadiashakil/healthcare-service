@@ -4,17 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
-@Table(name = "patients")
+@Table(name = "doctors")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Patient {
+public class Doctor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +22,7 @@ public class Patient {
     @Column(nullable = false)
     private String name;
 
-    private LocalDate dob;
-
-    private String gender;
+    private String specialization;
 
     private String phone;
 

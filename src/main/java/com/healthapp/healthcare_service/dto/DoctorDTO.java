@@ -1,26 +1,18 @@
 package com.healthapp.healthcare_service.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
-import java.time.LocalDate;
-
-
 @Data
-public class PatientDTO {
+public class DoctorDTO {
     @NotBlank(message = "Name is required")
     @Size(min = 3, max = 50, message = "Name must be between 3 and 50 characters")
     private String name;
 
-    @Past(message = "Date of birth must be in the past")
-    private LocalDate dob;
-
-    @NotBlank(message = "Gender is required")
-    @Pattern(regexp = "Male|Female|Other", message = "Gender must be Male, Female, or Other")
-    private String gender;
+    @NotBlank(message = "Specialization is required")
+    @Size(min = 3, max = 100, message = "Specialization must be between 3 and 100 characters")
+    private String specialization;
 
     @NotBlank(message = "Phone number is required")
     @Size(min = 10, max = 15, message = "Phone number must be between 10 and 15 digits")

@@ -20,7 +20,8 @@ public class PatientService {
     public Patient createPatient(PatientDTO dto) {
         Patient patient = new Patient();
         patient.setName(dto.getName());
-        patient.setEmail(dto.getEmail());
+        patient.setDob(dto.getDob());
+        patient.setGender(dto.getGender());
         patient.setPhone(dto.getPhone());
         return patientRepository.save(patient);
     }
@@ -37,12 +38,13 @@ public class PatientService {
     }
 
 
-    public Patient updatePatient(Long id, PatientDTO dto) {
-        Patient patient = getPatient(id);
-        patient.setName(dto.getName());
-        patient.setEmail(dto.getEmail());
-        patient.setPhone(dto.getPhone());
-        return patientRepository.save(patient);
+    public Patient updatePatient(Long id, PatientDTO updatedPatient) {
+        Patient existing = getPatient(id);
+        existing.setName(updatedPatient.getName());
+        existing.setDob(updatedPatient.getDob());
+        existing.setGender(updatedPatient.getGender());
+        existing.setPhone(updatedPatient.getPhone());
+        return patientRepository.save(existing);
     }
 
 
