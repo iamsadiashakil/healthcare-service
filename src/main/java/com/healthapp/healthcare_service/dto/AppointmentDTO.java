@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 
 @Data
 public class AppointmentDTO {
-    @NotNull(message = "Patient ID is required")
-    private Long patientId;
+    private Long id;
 
-    @NotNull(message = "Doctor ID is required")
-    private Long doctorId;
+    private PatientDTO patient;
+
+    private DoctorDTO doctor;
 
     @NotNull(message = "Appointment date is required")
     @Future(message = "Appointment date must be in the future")

@@ -1,12 +1,10 @@
 package com.healthapp.healthcare_service.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 @Entity
 @Table(name = "appointments")
 @Data
@@ -31,9 +29,11 @@ public class Appointment {
     private LocalDateTime appointmentDate;
 
     @Column(nullable = false)
+    @Builder.Default
     private String status = "SCHEDULED";
 
     @Column(name = "created_at", updatable = false)
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 }
 

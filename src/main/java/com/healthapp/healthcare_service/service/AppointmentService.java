@@ -4,6 +4,7 @@ import com.healthapp.healthcare_service.dto.AppointmentDTO;
 import com.healthapp.healthcare_service.entity.Appointment;
 import com.healthapp.healthcare_service.entity.Doctor;
 import com.healthapp.healthcare_service.entity.Patient;
+import com.healthapp.healthcare_service.mapper.AppointmentMapper;
 import com.healthapp.healthcare_service.repository.AppointmentRepository;
 import com.healthapp.healthcare_service.repository.DoctorRepository;
 import com.healthapp.healthcare_service.repository.PatientRepository;
@@ -18,9 +19,13 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
+    private final AppointmentMapper appointmentMapper;
 
-    public List<Appointment> findAll() {
-        return appointmentRepository.findAll();
+    public List<AppointmentDTO> findAll() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        return appointments.stream()
+                .map(appointmentMapper::toDTO)
+                .toList();
     }
 
     public Appointment findById(Long id) {
@@ -29,10 +34,10 @@ public class AppointmentService {
     }
 
     public Appointment save(AppointmentDTO appointmentDTO) {
-        Patient patient = patientRepository.findById(appointmentDTO.getPatientId())
-                .orElseThrow(() -> new RuntimeException("Patient not found with id " + appointmentDTO.getPatientId()));
-        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctorId())
-                .orElseThrow(() -> new RuntimeException("Doctor not found with id " + appointmentDTO.getDoctorId()));
+        Patient patient = patientRepository.findById(appointmentDTO.getPatient().getId())
+                .orElseThrow(() -> new RuntimeException("Patient not found with id " + appointmentDTO.getPatient().getId()));
+        Doctor doctor = doctorRepository.findById(appointmentDTO.getDoctor().getId())
+                .orElseThrow(() -> new RuntimeException("Doctor not found with id " + appointmentDTO.getDoctor().getId()));
 
         Appointment appointment = Appointment.builder()
                 .status(appointmentDTO.getStatus())
