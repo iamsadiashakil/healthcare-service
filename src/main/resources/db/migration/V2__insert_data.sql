@@ -1,17 +1,17 @@
 -- Insert mock staff
-INSERT INTO staff (name, email, phone, role, join_date) VALUES
-('Dr. Sarah Johnson', 'sarah.johnson@hospital.com', '+1234567890', 'Doctor', '2020-01-15'),
-('Dr. Michael Brown', 'michael.brown@hospital.com', '+1987654321', 'Doctor', '2019-05-20'),
-('Nurse Emily Davis', 'emily.davis@hospital.com', '+1122334455', 'Nurse', '2021-03-10'),
-('Dr. Robert Wilson', 'robert.wilson@hospital.com', '+1555666777', 'Doctor', '2018-11-05');
+INSERT INTO staff (name, email, phone, role, join_date, password) VALUES
+('Dr. Sarah Johnson', 'sarah.johnson@hospital.com', '+1234567890', 'Doctor', '2020-01-15', '123'),
+('Dr. Michael Brown', 'michael.brown@hospital.com', '+1987654321', 'Doctor', '2019-05-20', '123'),
+('Nurse Emily Davis', 'emily.davis@hospital.com', '+1122334455', 'Nurse', '2021-03-10', '123'),
+('Dr. Robert Wilson', 'robert.wilson@hospital.com', '+1555666777', 'Doctor', '2018-11-05', '123');
 
 -- Insert mock patients
-INSERT INTO patients (name, age, sex, blood_group, is_active) VALUES
-('John Doe', 45, 'Male', 'A+', true),
-('Jane Smith', 32, 'Female', 'B-', true),
-('Michael Johnson', 58, 'Male', 'O+', true),
-('Emily Williams', 29, 'Female', 'AB+', true),
-('David Brown', 63, 'Male', 'A-', true);
+INSERT INTO patients (name, age, sex, blood_group, is_active, email, password) VALUES
+('John Doe', 45, 'Male', 'A+', true, 'john.doe@hospital.com', '123'),
+('Jane Smith', 32, 'Female', 'B-', true, 'jane.smith@hospital.com', '123'),
+('Michael Johnson', 58, 'Male', 'O+', true, 'micheal.johnson@hospital.com', '123'),
+('Emily Williams', 29, 'Female', 'AB+', true, 'emily.williams@hospital.com', '123'),
+('David Brown', 63, 'Male', 'A-', true, 'david.brown@hospital.com', '123');
 
 -- Insert mock allergies
 INSERT INTO allergies (name, type, severity, reaction, noted_on, patient_id) VALUES

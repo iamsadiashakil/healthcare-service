@@ -53,3 +53,10 @@ CREATE TABLE appointments (
     notes TEXT,
     prescription TEXT
 );
+
+-- Add these to your existing patient table
+ALTER TABLE patients ADD COLUMN email VARCHAR(100) UNIQUE NOT NULL;
+ALTER TABLE patients ADD COLUMN password VARCHAR(100) NOT NULL;
+
+-- Add these to your existing staff table
+ALTER TABLE staff ADD COLUMN password VARCHAR(100) NOT NULL;

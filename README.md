@@ -10,6 +10,24 @@ http://localhost:8080/api
 
 ## **Endpoints**
 
+### Patient Login
+```
+curl --location 'http://localhost:8080/api/auth/login' \
+--header 'Content-Type: application/json' \
+--data-raw '{"email":"john.doe@hospital.com","password":"123"}'
+```
+### Staff Login
+```
+curl -X POST http://localhost:8082/api/auth/login \
+-H "Content-Type: application/json" \
+-d '{"email":"staff@hospital.com","password":"staff123"}'
+```
+### Accessing Protected Endpoints
+```
+curl --location 'http://localhost:8080/api/patients/1/vitals' \
+--header 'Authorization: Bearer <JWT_TOKEN>'
+```
+
 ### **Patients**
 
 #### 1. Create Patient
