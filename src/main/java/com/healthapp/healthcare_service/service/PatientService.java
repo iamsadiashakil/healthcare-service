@@ -1,55 +1,92 @@
 package com.healthapp.healthcare_service.service;
 
-import com.healthapp.healthcare_service.dto.PatientDTO;
+import com.healthapp.healthcare_service.dto.AllergyDto;
+import com.healthapp.healthcare_service.dto.MessageDto;
+import com.healthapp.healthcare_service.dto.StaffDto;
+import com.healthapp.healthcare_service.dto.VitalDto;
+import com.healthapp.healthcare_service.entity.Message;
 import com.healthapp.healthcare_service.entity.Patient;
+import com.healthapp.healthcare_service.entity.Staff;
 import com.healthapp.healthcare_service.exception.ResourceNotFoundException;
-import com.healthapp.healthcare_service.mapper.PatientMapper;
-import com.healthapp.healthcare_service.repository.PatientRepository;
+import com.healthapp.healthcare_service.mapper.AllergyMapper;
+import com.healthapp.healthcare_service.mapper.MessageMapper;
+import com.healthapp.healthcare_service.mapper.StaffMapper;
+import com.healthapp.healthcare_service.mapper.VitalMapper;
+import com.healthapp.healthcare_service.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PatientService {
+    private final AllergyRepository allergyRepository;
+    private final VitalRepository vitalRepository;
+    private final MessageRepository messageRepository;
     private final PatientRepository patientRepository;
-    private final PatientMapper patientMapper;
+    private final StaffRepository staffRepository;
 
-    public PatientDTO createPatient(PatientDTO dto) {
-        Patient patient = patientMapper.toEntity(dto);
-        Patient savedPatient = patientRepository.save(patient);
-        return patientMapper.toDTO(savedPatient);
+    private final AllergyMapper allergyMapper;
+    private final VitalMapper vitalMapper;
+    private final MessageMapper messageMapper;
+    private final StaffMapper staffMapper;
+
+    public List<AllergyDto> getAllergiesByPatientId(Long patientId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
+
+        return allergyRepository.findByPatient(patient).stream().map(allergyMapper::allergyToAllergyDto).collect(Collectors.toList());
     }
 
+    public List<VitalDto> getVitalsByPatientId(Long patientId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
 
-    public PatientDTO getPatient(Long id) {
-        Patient patient = findById(id);
-        return patientMapper.toDTO(patient);
+        return vitalRepository.findByPatient(patient).stream().map(vitalMapper::vitalToVitalDto).collect(Collectors.toList());
     }
 
-    private Patient findById(Long id) {
-        return patientRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id " + id));
+    public List<VitalDto> getVitalsByPatientIdAndType(Long patientId, String type) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
+
+        return vitalRepository.findByPatientAndType(patient, type).stream().map(vitalMapper::vitalToVitalDto).collect(Collectors.toList());
     }
 
+    public List<MessageDto> getMessagesByPatientId(Long patientId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
 
-    public List<PatientDTO> getAllPatients() {
-        List<Patient> patients = patientRepository.findAll();
-        return patients.stream()
-                .map(patientMapper::toDTO)
-                .toList();
+        return messageRepository.findByPatient(patient).stream().map(messageMapper::messageToMessageDto).collect(Collectors.toList());
     }
 
+    public List<MessageDto> getMessagesByPatientIdAndStaffId(Long patientId, Long staffId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
 
-    public PatientDTO updatePatient(Long id, PatientDTO updatedPatient) {
-        findById(id);
-        return createPatient(updatedPatient);
+        Staff staff = staffRepository.findById(staffId).orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + staffId));
+
+        return messageRepository.findByPatientAndStaff(patient, staff).stream().map(messageMapper::messageToMessageDto).collect(Collectors.toList());
     }
 
+    @Transactional
+    public MessageDto sendMessage(Long patientId, MessageDto messageDto, String username) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
 
-    public void deletePatient(Long id) {
-        patientRepository.deleteById(id);
+        Staff staff = staffRepository.findById(messageDto.getStaffId()).orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + messageDto.getStaffId()));
+
+        Message message = messageMapper.messageDtoToMessage(messageDto);
+        message.setPatient(patient);
+        message.setStaff(staff);
+        message.setUserMessage(true);
+        message.setTimestamp(LocalDateTime.now());
+
+        Message savedMessage = messageRepository.save(message);
+        return messageMapper.messageToMessageDto(savedMessage);
+    }
+
+    public List<StaffDto> getStaffForPatient(Long patientId) {
+        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
+
+        // In a real app, this would fetch staff associated with the patient (e.g., through appointments)
+        return staffRepository.findAll().stream().map(staffMapper::staffToStaffDto).collect(Collectors.toList());
     }
 }
-

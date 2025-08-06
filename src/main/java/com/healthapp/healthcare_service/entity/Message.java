@@ -1,33 +1,36 @@
 package com.healthapp.healthcare_service.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.util.UUID;
 
 @Entity
-@Table(name = "appointments")
+@Table(name = "messages")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Appointment {
+public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "patient_id")
-    private Patient patient;
+    private String text;
+
+    @Column(name = "is_user_message")
+    private boolean isUserMessage;
+
+    private LocalDateTime timestamp;
 
     @ManyToOne
     @JoinColumn(name = "staff_id")
     private Staff staff;
 
-    private LocalDateTime time;
-    private String status;
-    private String notes;
-    private String prescription;
+    @ManyToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 }
-

@@ -1,31 +1,55 @@
--- Create Patients table
 CREATE TABLE patients (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    dob DATE,
-    gender VARCHAR(10),
-    phone VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) NOT NULL,
+    age INTEGER NOT NULL,
+    sex VARCHAR(10) NOT NULL,
+    blood_group VARCHAR(10),
+    is_active BOOLEAN DEFAULT TRUE
 );
 
--- Create Doctors table
-CREATE TABLE doctors (
+CREATE TABLE allergies (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    specialization VARCHAR(255),
-    phone VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    name VARCHAR(100) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    severity VARCHAR(50) NOT NULL,
+    reaction VARCHAR(100) NOT NULL,
+    noted_on DATE NOT NULL,
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE
 );
 
--- Create Appointments table
+CREATE TABLE vitals (
+    id BIGSERIAL PRIMARY KEY,
+    reading VARCHAR(50) NOT NULL,
+    type VARCHAR(50) NOT NULL,
+    measured_at TIMESTAMP NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE
+);
+
+CREATE TABLE staff (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(20),
+    role VARCHAR(50) NOT NULL,
+    join_date DATE NOT NULL
+);
+
+CREATE TABLE messages (
+    id BIGSERIAL PRIMARY KEY,
+    text TEXT NOT NULL,
+    is_user_message BOOLEAN NOT NULL,
+    timestamp TIMESTAMP NOT NULL,
+    staff_id BIGINT REFERENCES staff(id) ON DELETE CASCADE,
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE
+);
+
 CREATE TABLE appointments (
     id BIGSERIAL PRIMARY KEY,
-    patient_id BIGINT NOT NULL,
-    doctor_id BIGINT NOT NULL,
-    appointment_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) DEFAULT 'SCHEDULED',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_patient FOREIGN KEY (patient_id) REFERENCES patients (id) ON DELETE CASCADE,
-    CONSTRAINT fk_doctor FOREIGN KEY (doctor_id) REFERENCES doctors (id) ON DELETE CASCADE
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE,
+    staff_id BIGINT REFERENCES staff(id) ON DELETE CASCADE,
+    time TIMESTAMP NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    notes TEXT,
+    prescription TEXT
 );
-

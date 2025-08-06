@@ -80,7 +80,7 @@ http://localhost:8080/api
 
 #### 1. Create Doctor
 
-**POST** `/doctors`
+**POST** `/staff`
 
 ```json
 {
@@ -92,15 +92,15 @@ http://localhost:8080/api
 
 #### 2. Get All Doctors
 
-**GET** `/doctors`
+**GET** `/staff`
 
 #### 3. Get Doctor By ID
 
-**GET** `/doctors/{id}`
+**GET** `/staff/{id}`
 
 #### 4. Update Doctor
 
-**PUT** `/doctors/{id}`
+**PUT** `/staff/{id}`
 
 ```json
 {
@@ -112,7 +112,7 @@ http://localhost:8080/api
 
 #### 5. Delete Doctor
 
-**DELETE** `/doctors/{id}`
+**DELETE** `/staff/{id}`
 
 ---
 
