@@ -7,41 +7,37 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "patients")
+@Table(name = "staff")
 @Getter
 @Setter
-public class Patient implements UserDetails {
+public class Staff implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
-    private int age;
-    private String sex;
-    private String bloodGroup;
-    private String email; // Add email field
+    private String email;
     private String password; // Add password field
+    private String phone;
+    private String role;
 
-    @Column(name = "is_active")
-    private boolean isActive;
+    @Column(name = "join_date")
+    private LocalDate joinDate;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Allergy> allergies = new ArrayList<>();
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointments;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Vital> vitals = new ArrayList<>();
-
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments = new ArrayList<>();
+    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> sentMessages;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_PATIENT"));
+        return List.of(new SimpleGrantedAuthority("ROLE_STAFF"));
     }
 
     @Override
@@ -66,6 +62,6 @@ public class Patient implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return isActive;
+        return true;
     }
 }
