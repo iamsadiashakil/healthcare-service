@@ -21,6 +21,15 @@ INSERT INTO healthcare_proxies (name, email, phone, relationship, password, pati
 ('Robert Williams', 'robert.williams@example.com', '+1555666778', 'Parent', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 4),
 ('Sarah Brown', 'sarah.brown@example.com', '+1999888777', 'Child', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 5);
 
+-- Insert patient-staff relationships
+INSERT INTO patient_staff (patient_id, staff_id) VALUES
+(1, 1), -- John Doe assigned to Dr. Sarah Johnson
+(1, 2), -- John Doe also assigned to Dr. Michael Brown
+(2, 1), -- Jane Smith assigned to Dr. Sarah Johnson
+(3, 3), -- Michael Johnson assigned to Nurse Emily Davis
+(4, 4), -- Emily Williams assigned to Dr. Robert Wilson
+(5, 2); -- David Brown assigned to Dr. Michael Brown
+
 -- Insert mock allergies
 INSERT INTO allergies (name, type, severity, reaction, noted_on, patient_id) VALUES
 ('Penicillin', 'Drug', 'Severe', 'Anaphylaxis', '2022-03-12', 1),

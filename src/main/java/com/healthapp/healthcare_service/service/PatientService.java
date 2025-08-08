@@ -65,9 +65,11 @@ public class PatientService {
     }
 
     public List<StaffDto> getStaffForPatient(Long patientId) {
-        patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
 
-        // In a real app, this would fetch staff associated with the patient (e.g., through appointments)
-        return staffRepository.findAll().stream().map(staffMapper::staffToStaffDto).collect(Collectors.toList());
+        return patient.getAssignedStaff().stream()
+                .map(staffMapper::staffToStaffDto)
+                .collect(Collectors.toList());
     }
 }

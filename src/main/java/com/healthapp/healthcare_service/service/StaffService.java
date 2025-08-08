@@ -30,6 +30,7 @@ public class StaffService {
     private final AppointmentMapper appointmentMapper;
     private final MessageMapper messageMapper;
     private final StaffMapper staffMapper;
+    private final HealthcareProxyMapper healthcareProxyMapper;
 
     public List<PatientDto> getAllPatients() {
         return patientRepository.findAll().stream()
@@ -190,5 +191,14 @@ public class StaffService {
 
         Staff updatedStaff = staffRepository.save(staff);
         return staffMapper.staffToStaffDto(updatedStaff);
+    }
+
+    public List<HealthcareProxyDto> getAssignedPatientsProxies(Long staffId) {
+        Staff staff = staffRepository.findById(staffId)
+                .orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + staffId));
+
+        return staff.getPatients().stream()
+                .map(patient -> healthcareProxyMapper.healthcareProxyToHealthcareProxyDto(patient.getHealthcareProxy()))
+                .collect(Collectors.toList());
     }
 }

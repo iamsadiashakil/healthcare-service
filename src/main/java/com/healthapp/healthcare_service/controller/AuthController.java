@@ -71,7 +71,7 @@ public class AuthController {
             )
     })
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest authRequest) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authRequest.getEmail(),
@@ -115,7 +115,7 @@ public class AuthController {
                     description = "Bad request - email already exists or invalid data"
             )
     })
-    @PostMapping("/register/heathcare-proxy")
+    @PostMapping("/register/healthcare-proxy")
     public ResponseEntity<AuthResponse> registerPatientProxy(@Valid @RequestBody AuthRequest authRequest) {
         // Check if email exists
         if (healthcareProxyRepository.findByEmail(authRequest.getEmail()).isPresent() ||

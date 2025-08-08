@@ -35,6 +35,9 @@ public class Staff implements UserDetails {
     @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> sentMessages;
 
+    @ManyToMany(mappedBy = "assignedStaff")
+    private List<Patient> patients;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_STAFF"));

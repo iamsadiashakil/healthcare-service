@@ -36,4 +36,12 @@ public class Patient {
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointments = new ArrayList<>();
 
+    @ManyToMany
+    @JoinTable(
+            name = "patient_staff",
+            joinColumns = @JoinColumn(name = "patient_id"),
+            inverseJoinColumns = @JoinColumn(name = "staff_id")
+    )
+    private List<Staff> assignedStaff = new ArrayList<>();
+
 }

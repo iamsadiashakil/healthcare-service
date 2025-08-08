@@ -329,4 +329,22 @@ public class StaffController {
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(staffService.updateStaffProfile(staffDto, userDetails.getUsername()));
     }
+
+    @Operation(
+            summary = "Get patient's proxies by staff id",
+            description = "Retrieve all patient's healthcare proxies by a staff member"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved patient's proxy list",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HealthcareProxyDto.class, type = "array"))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing JWT"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient permissions"),
+            @ApiResponse(responseCode = "404", description = "Staff not found")
+    })
+    @GetMapping("/{staffId}/assigned-patients")
+    public ResponseEntity<List<HealthcareProxyDto>> getAssignedPatientsProxies(
+            @PathVariable Long staffId) {
+        return ResponseEntity.ok(staffService.getAssignedPatientsProxies(staffId));
+    }
 }

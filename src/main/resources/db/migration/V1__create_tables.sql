@@ -27,6 +27,12 @@ CREATE TABLE staff (
     join_date DATE NOT NULL
 );
 
+CREATE TABLE patient_staff (
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE,
+    staff_id BIGINT REFERENCES staff(id) ON DELETE CASCADE,
+    PRIMARY KEY (patient_id, staff_id)
+);
+
 CREATE TABLE allergies (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
