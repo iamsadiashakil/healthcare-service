@@ -1,9 +1,9 @@
 # healthcare-service
 The **Healthcare Service API** is a Spring Boot application that provides RESTful endpoints to manage Patients, Doctors, and Appointments in a healthcare system.
 
-## **Base URL**
+## **Swagger UI**
 ```
-http://localhost:8080/api
+http://localhost:8080/swagger-ui/index.html
 ````
 
 ---
@@ -217,6 +217,42 @@ mvn spring-boot:run
 
        docker-compose down -v
 
+---
+
+## Send Email using Gmail SMTP (for testing purposes only)
+Gmail SMTP is free and works well for testing:
+
+| Config Key | Value                            |
+| ---------- | -------------------------------- |
+| Host       | `smtp.gmail.com`                 |
+| Port       | `587` (TLS) or `465` (SSL)       |
+| Username   | Your Gmail address               |
+| Password   | App password (not real password) |
+
+🔐 Step 1: Create a Gmail App Password
+1. Go to: https://myaccount.google.com/apppasswords
+2. Generate an app password for Mail and "Other" app. 
+3. Save the 16-digit password.
+
+You need 2FA enabled to access App Passwords.
+
+⚙️ Step 2: Add the SMTP Config to application.yml
+```yaml
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: your.email@gmail.com
+    password: your-app-password
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+```
+.
+✅ Step 3: Send Email via Your Existing Service
 ---
 
 ## **Future Enhancements**

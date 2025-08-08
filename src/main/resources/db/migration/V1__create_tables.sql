@@ -60,3 +60,10 @@ ALTER TABLE patients ADD COLUMN password VARCHAR(100) NOT NULL;
 
 -- Add these to your existing staff table
 ALTER TABLE staff ADD COLUMN password VARCHAR(100) NOT NULL;
+
+CREATE TABLE password_reset_tokens (
+    id BIGSERIAL PRIMARY KEY,
+    token VARCHAR(255) NOT NULL UNIQUE,
+    user_email VARCHAR(255) NOT NULL,
+    expiry_date TIMESTAMP NOT NULL
+);
