@@ -12,7 +12,10 @@ public class MessageDto {
     @Size(max = 2000, message = "Message must be less than 2000 characters")
     private String text;
 
-    private boolean isUserMessage;
+    @NotBlank(message = "sender type is required")
+    @Pattern(regexp = "STAFF|PATIENT_PROXY",
+            message = "Role must be PATIENT_PROXY or STAFF")
+    private String senderType;
 
     @PastOrPresent(message = "Timestamp cannot be in the future")
     private LocalDateTime timestamp;
@@ -22,4 +25,7 @@ public class MessageDto {
 
     @NotNull(message = "Patient ID is required")
     private Long patientId;
+
+    @NotNull(message = "Healthcare proxy ID is required")
+    private Long healthcareProxyId;
 }

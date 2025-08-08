@@ -167,7 +167,7 @@ public class StaffService {
         Message message = messageMapper.messageDtoToMessage(messageDto);
         message.setPatient(patient);
         message.setStaff(staff);
-        message.setUserMessage(false);
+        message.setSenderType("STAFF");
         message.setTimestamp(LocalDateTime.now());
 
         Message savedMessage = messageRepository.save(message);

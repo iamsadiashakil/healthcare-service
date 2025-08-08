@@ -1,14 +1,15 @@
 package com.healthapp.healthcare_service.service;
 
-import com.healthapp.healthcare_service.dto.PasswordResetDto;
 import com.healthapp.healthcare_service.dto.ForgotPasswordDto;
+import com.healthapp.healthcare_service.dto.PasswordResetDto;
 import com.healthapp.healthcare_service.entity.PasswordResetToken;
 import com.healthapp.healthcare_service.exception.InvalidTokenException;
 import com.healthapp.healthcare_service.exception.ResourceNotFoundException;
+import com.healthapp.healthcare_service.repository.HealthcareProxyRepository;
 import com.healthapp.healthcare_service.repository.PasswordResetTokenRepository;
-import com.healthapp.healthcare_service.repository.PatientRepository;
 import com.healthapp.healthcare_service.repository.StaffRepository;
 import com.healthapp.healthcare_service.util.TokenGenerator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,27 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 
 @Service
+@RequiredArgsConstructor
 public class PasswordService {
-    private final PatientRepository patientRepository;
+    private final HealthcareProxyRepository healthcareProxyRepository;
     private final StaffRepository staffRepository;
     private final PasswordResetTokenRepository tokenRepository;
     private final EmailService emailService;
     private final PasswordEncoder passwordEncoder;
     private final TokenGenerator tokenGenerator;
-
-    public PasswordService(PatientRepository patientRepository,
-                           StaffRepository staffRepository,
-                           PasswordResetTokenRepository tokenRepository,
-                           EmailService emailService,
-                           PasswordEncoder passwordEncoder,
-                           TokenGenerator tokenGenerator) {
-        this.patientRepository = patientRepository;
-        this.staffRepository = staffRepository;
-        this.tokenRepository = tokenRepository;
-        this.emailService = emailService;
-        this.passwordEncoder = passwordEncoder;
-        this.tokenGenerator = tokenGenerator;
-    }
 
     @Transactional
     public void requestPasswordReset(ForgotPasswordDto request) {
@@ -44,7 +32,7 @@ public class PasswordService {
         tokenRepository.deleteAllExpiredSince(LocalDateTime.now());
 
         // Check if email exists in either patients or staff
-        boolean emailExists = patientRepository.findByEmail(request.getEmail()).isPresent() ||
+        boolean emailExists = healthcareProxyRepository.findByEmail(request.getEmail()).isPresent() ||
                 staffRepository.findByEmail(request.getEmail()).isPresent();
 
         if (!emailExists) {
@@ -79,10 +67,10 @@ public class PasswordService {
         }
 
         // Find user by email (check both patients and staff)
-        patientRepository.findByEmail(token.getUserEmail())
+        healthcareProxyRepository.findByEmail(token.getUserEmail())
                 .ifPresent(patient -> {
                     patient.setPassword(passwordEncoder.encode(resetDto.getNewPassword()));
-                    patientRepository.save(patient);
+                    healthcareProxyRepository.save(patient);
                     tokenRepository.delete(token);
                 });
 

@@ -7,6 +7,26 @@ CREATE TABLE patients (
     is_active BOOLEAN DEFAULT TRUE
 );
 
+CREATE TABLE healthcare_proxies (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    relationship VARCHAR(50) NOT NULL,
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE
+);
+
+CREATE TABLE staff (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(100) NOT NULL,
+    phone VARCHAR(20),
+    role VARCHAR(50) NOT NULL,
+    join_date DATE NOT NULL
+);
+
 CREATE TABLE allergies (
     id BIGSERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -26,22 +46,14 @@ CREATE TABLE vitals (
     patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE
 );
 
-CREATE TABLE staff (
-    id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    phone VARCHAR(20),
-    role VARCHAR(50) NOT NULL,
-    join_date DATE NOT NULL
-);
-
 CREATE TABLE messages (
     id BIGSERIAL PRIMARY KEY,
     text TEXT NOT NULL,
-    is_user_message BOOLEAN NOT NULL,
+    sender_type VARCHAR(20) NOT NULL,
     timestamp TIMESTAMP NOT NULL,
     staff_id BIGINT REFERENCES staff(id) ON DELETE CASCADE,
-    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE
+    patient_id BIGINT REFERENCES patients(id) ON DELETE CASCADE,
+    healthcare_proxy_id BIGINT REFERENCES healthcare_proxies(id) ON DELETE CASCADE
 );
 
 CREATE TABLE appointments (
@@ -54,16 +66,10 @@ CREATE TABLE appointments (
     prescription TEXT
 );
 
--- Add these to your existing patient table
-ALTER TABLE patients ADD COLUMN email VARCHAR(100) UNIQUE NOT NULL;
-ALTER TABLE patients ADD COLUMN password VARCHAR(100) NOT NULL;
-
--- Add these to your existing staff table
-ALTER TABLE staff ADD COLUMN password VARCHAR(100) NOT NULL;
-
 CREATE TABLE password_reset_tokens (
     id BIGSERIAL PRIMARY KEY,
     token VARCHAR(255) NOT NULL UNIQUE,
     user_email VARCHAR(255) NOT NULL,
     expiry_date TIMESTAMP NOT NULL
 );
+
