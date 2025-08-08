@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/api-docs/**"
                         ).permitAll()
-                        .requestMatchers("/api/patients/**").hasAnyRole("PATIENT", "STAFF")
+                        .requestMatchers("/api/patients/**").hasAnyRole("PATIENT_PROXY", "STAFF")
+                        .requestMatchers("/api/proxies/**").hasAnyRole("PATIENT_PROXY", "STAFF")
                         .requestMatchers("/api/staff/**").hasRole("STAFF")
                         .anyRequest().authenticated()
                 )

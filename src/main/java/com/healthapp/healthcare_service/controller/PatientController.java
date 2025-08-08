@@ -14,10 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -123,30 +120,6 @@ public class PatientController {
             return ResponseEntity.ok(patientService.getMessagesByPatientIdAndStaffId(patientId, staffId));
         }
         return ResponseEntity.ok(patientService.getMessagesByPatientId(patientId));
-    }
-
-    @Operation(
-            summary = "Send message to patient",
-            description = "Create and send a new message to a patient from the authenticated staff member",
-            parameters = {
-                    @Parameter(name = "patientId", description = "ID of the recipient patient", required = true, example = "1")
-            }
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Message successfully sent",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = MessageDto.class))),
-            @ApiResponse(responseCode = "400", description = "Invalid message content"),
-            @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing JWT"),
-            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient permissions"),
-            @ApiResponse(responseCode = "404", description = "Patient not found")
-    })
-    @PostMapping("/{patientId}/messages")
-    public ResponseEntity<MessageDto> sendMessage(
-            @PathVariable Long patientId,
-            @Valid @RequestBody MessageDto messageDto,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        return ResponseEntity.ok(patientService.sendMessage(patientId, messageDto, userDetails.getUsername()));
     }
 
     @Operation(

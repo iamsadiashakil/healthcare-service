@@ -4,7 +4,6 @@ import com.healthapp.healthcare_service.dto.AllergyDto;
 import com.healthapp.healthcare_service.dto.MessageDto;
 import com.healthapp.healthcare_service.dto.StaffDto;
 import com.healthapp.healthcare_service.dto.VitalDto;
-import com.healthapp.healthcare_service.entity.Message;
 import com.healthapp.healthcare_service.entity.Patient;
 import com.healthapp.healthcare_service.entity.Staff;
 import com.healthapp.healthcare_service.exception.ResourceNotFoundException;
@@ -15,9 +14,7 @@ import com.healthapp.healthcare_service.mapper.VitalMapper;
 import com.healthapp.healthcare_service.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,26 +64,12 @@ public class PatientService {
         return messageRepository.findByPatientAndStaff(patient, staff).stream().map(messageMapper::messageToMessageDto).collect(Collectors.toList());
     }
 
-    @Transactional
-    public MessageDto sendMessage(Long patientId, MessageDto messageDto, String username) {
-        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
-
-        Staff staff = staffRepository.findById(messageDto.getStaffId()).orElseThrow(() -> new ResourceNotFoundException("Staff not found with id: " + messageDto.getStaffId()));
-
-        Message message = messageMapper.messageDtoToMessage(messageDto);
-        message.setPatient(patient);
-        message.setStaff(staff);
-        message.setUserMessage(true);
-        message.setTimestamp(LocalDateTime.now());
-
-        Message savedMessage = messageRepository.save(message);
-        return messageMapper.messageToMessageDto(savedMessage);
-    }
-
     public List<StaffDto> getStaffForPatient(Long patientId) {
-        Patient patient = patientRepository.findById(patientId).orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient not found with id: " + patientId));
 
-        // In a real app, this would fetch staff associated with the patient (e.g., through appointments)
-        return staffRepository.findAll().stream().map(staffMapper::staffToStaffDto).collect(Collectors.toList());
+        return patient.getAssignedStaff().stream()
+                .map(staffMapper::staffToStaffDto)
+                .collect(Collectors.toList());
     }
 }

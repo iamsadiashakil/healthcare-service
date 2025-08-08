@@ -7,40 +7,34 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @Entity
-@Table(name = "staff")
+@Table(name = "healthcare_proxies")
 @Getter
 @Setter
-public class Staff implements UserDetails {
+public class HealthcareProxy implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
     private String email;
-    private String password; // Add password field
+    private String password;
     private String phone;
-    private String role;
+    private String relationship;
 
-    @Column(name = "join_date")
-    private LocalDate joinDate;
+    @OneToOne
+    @JoinColumn(name = "patient_id")
+    private Patient patient;
 
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Appointment> appointments;
-
-    @OneToMany(mappedBy = "staff", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "healthcareProxy", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> sentMessages;
-
-    @ManyToMany(mappedBy = "assignedStaff")
-    private List<Patient> patients;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_STAFF"));
+        return List.of(new SimpleGrantedAuthority("ROLE_PATIENT_PROXY"));
     }
 
     @Override

@@ -21,8 +21,8 @@ public class Message {
 
     private String text;
 
-    @Column(name = "is_user_message")
-    private boolean isUserMessage;
+     @Column(name = "sender_type")
+    private String senderType; // "STAFF" or "PATIENT_PROXY"
 
     private LocalDateTime timestamp;
 
@@ -33,4 +33,8 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private Patient patient;
+
+    @ManyToOne
+    @JoinColumn(name = "healthcare_proxy_id")
+    private HealthcareProxy healthcareProxy;
 }

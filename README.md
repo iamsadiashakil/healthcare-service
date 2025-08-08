@@ -1,193 +1,223 @@
-# healthcare-service
-The **Healthcare Service API** is a Spring Boot application that provides RESTful endpoints to manage Patients, Doctors, and Appointments in a healthcare system.
+Here's the updated README.md file with the current API structure and endpoints:
+
+# Healthcare Service API
+
+The **Healthcare Service API** is a Spring Boot application that provides RESTful endpoints for a comprehensive healthcare management system, including authentication, patient management, staff management, and healthcare proxy functionality.
 
 ## **Swagger UI**
 ```
 http://localhost:8080/swagger-ui/index.html
-````
+```
 
 ---
 
-## **Endpoints**
+## **Authentication**
 
-### Patient Login
+### Login
 ```
-curl --location 'http://localhost:8080/api/auth/login' \
---header 'Content-Type: application/json' \
---data-raw '{"email":"john.doe@hospital.com","password":"123"}'
+POST /api/auth/login
 ```
-### Staff Login
-```
-curl -X POST http://localhost:8082/api/auth/login \
--H "Content-Type: application/json" \
--d '{"email":"staff@hospital.com","password":"staff123"}'
-```
-### Accessing Protected Endpoints
-```
-curl --location 'http://localhost:8080/api/patients/1/vitals' \
---header 'Authorization: Bearer <JWT_TOKEN>'
-```
-
-### **Patients**
-
-#### 1. Create Patient
-**POST** `/patients`
+Request:
 ```json
 {
-  "name": "John Doe",
-  "dob": "1990-05-10",
-  "gender": "Male",
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
+Response:
+```json
+{
+  "token": "jwt.token.here",
+  "userType": "STAFF|PATIENT_PROXY"
+}
+```
+
+### Register Healthcare Proxy
+```
+POST /api/auth/register/healthcare-proxy
+```
+Request:
+```json
+{
+  "email": "proxy@example.com",
+  "password": "password123"
+}
+```
+
+### Register Staff (Admin only)
+```
+POST /api/auth/register/staff
+```
+Request:
+```json
+{
+  "email": "staff@example.com",
+  "password": "password123"
+}
+```
+
+### Forgot Password
+```
+POST /api/auth/forgot-password
+```
+Request:
+```json
+{
+  "email": "user@example.com"
+}
+```
+
+### Reset Password
+```
+POST /api/auth/reset-password
+```
+Request:
+```json
+{
+  "token": "reset-token",
+  "newPassword": "newPassword123",
+  "confirmPassword": "newPassword123"
+}
+```
+
+---
+
+## **Healthcare Proxy Endpoints**
+
+### Get Proxy Profile
+```
+GET /api/proxies/profile
+```
+Requires: JWT Token (PATIENT_PROXY role)
+
+### Update Proxy Profile
+```
+PUT /api/proxies/profile
+```
+Request:
+```json
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "updated@example.com",
   "phone": "1234567890"
 }
-````
+```
 
-**Response:**
+### Get Assigned Patient
+```
+GET /api/proxies/patient
+```
+Returns patient details assigned to the proxy
 
+### Send Message to Staff
+```
+POST /api/proxies/patient/messages?staffId=1
+```
+Request:
 ```json
 {
-  "id": 1,
-  "name": "John Doe",
-  "dob": "1990-05-10",
-  "gender": "Male",
-  "phone": "1234567890",
-  "createdAt": "2025-07-21T16:30:40.098127"
+  "content": "Message content here"
 }
 ```
-
-#### 2. Get All Patients
-
-**GET** `/patients`
-
-```json
-[
-  {
-    "id": 1,
-    "name": "John Doe",
-    "dob": "1990-05-10",
-    "gender": "Male",
-    "phone": "1234567890",
-    "createdAt": "2025-07-21T16:30:40.098127"
-  }
-]
-```
-
-#### 3. Get Patient By ID
-
-**GET** `/patients/{id}`
-
-#### 4. Update Patient
-
-**PUT** `/patients/{id}`
-
-```json
-{
-  "name": "John Smith",
-  "dob": "1990-05-10",
-  "gender": "Male",
-  "phone": "0987654321"
-}
-```
-
-#### 5. Delete Patient
-
-**DELETE** `/patients/{id}`
 
 ---
 
-### **Doctors**
+## **Patient Endpoints**
 
-#### 1. Create Doctor
-
-**POST** `/staff`
-
-```json
-{
-  "name": "Dr. Emily Clark",
-  "specialization": "Cardiologist",
-  "phone": "9876543210"
-}
+### Get Patient Allergies
 ```
-
-#### 2. Get All Doctors
-
-**GET** `/staff`
-
-#### 3. Get Doctor By ID
-
-**GET** `/staff/{id}`
-
-#### 4. Update Doctor
-
-**PUT** `/staff/{id}`
-
-```json
-{
-  "name": "Dr. Emily Watson",
-  "specialization": "Neurologist",
-  "phone": "1122334455"
-}
+GET /api/patients/{patientId}/allergies
 ```
+Returns list of allergies for the patient
 
-#### 5. Delete Doctor
+### Get Patient Vitals
+```
+GET /api/patients/{patientId}/vitals
+```
+Returns list of vital records for the patient
 
-**DELETE** `/staff/{id}`
+### Get Vitals by Type
+```
+GET /api/patients/{patientId}/vitals/{type}
+```
+Supported types: blood_pressure, heart_rate, etc.
+
+### Get Patient Messages
+```
+GET /api/patients/{patientId}/messages[?staffId=1]
+```
+Optional staffId parameter to filter messages
+
+### Get Staff for Patient
+```
+GET /api/patients/{patientId}/staff
+```
+Returns list of staff members associated with the patient
 
 ---
 
-### **Appointments**
+## **Staff Endpoints**
 
-#### 1. Create Appointment
-
-**POST** `/appointments`
-
-```json
-{
-  "patientId": 1,
-  "doctorId": 2,
-  "appointmentDate": "2025-07-25T14:30:00",
-  "status": "SCHEDULED"
-}
+### Get All Patients
 ```
-
-#### 2. Get All Appointments
-
-**GET** `/appointments`
-
-#### 3. Get Appointment By ID
-
-**GET** `/appointments/{id}`
-
-#### 4. Update Appointment
-
-**PUT** `/appointments/{id}`
-
-```json
-{
-  "patientId": 1,
-  "doctorId": 2,
-  "appointmentDate": "2025-07-30T11:00:00",
-  "status": "COMPLETED"
-}
+GET /api/staff/patients
 ```
+Returns list of all patients
 
-#### 5. Delete Appointment
+### Search Patients
+```
+GET /api/staff/patients/search?query=john
+```
+Searches patients by name, email, etc.
 
-**DELETE** `/appointments/{id}`
+### Get Patient Details
+```
+GET /api/staff/patients/{patientId}
+```
+Returns detailed patient information
 
----
+### Get/Add Patient Allergies
+```
+GET /api/staff/patients/{patientId}/allergies
+POST /api/staff/patients/{patientId}/allergies
+```
+Manage patient allergy records
 
-## **Validation Rules**
+### Get Patient Vitals
+```
+GET /api/staff/patients/{patientId}/vitals
+GET /api/staff/patients/{patientId}/vitals/{type}
+```
+View patient vital records
 
-* **Patient**
+### Manage Appointments
+```
+GET /api/staff/appointments
+GET /api/staff/appointments/{appointmentId}
+PUT /api/staff/appointments/{appointmentId}
+```
+View and update appointments
 
-   * `name` must be 3-50 characters.
-   * `dob` must be in the past.
-   * `gender` must be `Male`, `Female`, or `Other`.
-   * `phone` must be 10-15 digits.
-* **Appointment**
+### Patient Messaging
+```
+GET /api/staff/patients/{patientId}/messages
+POST /api/staff/patients/{patientId}/messages
+```
+View and send messages to patients
 
-   * `appointmentDate` must be in the future.
-   * `status` must be `SCHEDULED`, `COMPLETED`, or `CANCELLED`.
+### Staff Profile Management
+```
+GET /api/staff/profile
+PUT /api/staff/profile
+```
+View and update staff profile
+
+### Get Assigned Patients' Proxies
+```
+GET /api/staff/{staffId}/assigned-patients
+```
+Returns healthcare proxies for patients assigned to the staff member
 
 ---
 
@@ -214,29 +244,15 @@ mvn spring-boot:run
       docker-compose down
       ```
    ii. Remove all containers and volumes (reset DB):
-
-       docker-compose down -v
+      ```
+      docker-compose down -v
+      ```
 
 ---
 
-## Send Email using Gmail SMTP (for testing purposes only)
-Gmail SMTP is free and works well for testing:
+## **Email Configuration**
 
-| Config Key | Value                            |
-| ---------- | -------------------------------- |
-| Host       | `smtp.gmail.com`                 |
-| Port       | `587` (TLS) or `465` (SSL)       |
-| Username   | Your Gmail address               |
-| Password   | App password (not real password) |
-
-🔐 Step 1: Create a Gmail App Password
-1. Go to: https://myaccount.google.com/apppasswords
-2. Generate an app password for Mail and "Other" app. 
-3. Save the 16-digit password.
-
-You need 2FA enabled to access App Passwords.
-
-⚙️ Step 2: Add the SMTP Config to application.yml
+### Using Gmail SMTP (for testing)
 ```yaml
 spring:
   mail:
@@ -251,14 +267,10 @@ spring:
           starttls:
             enable: true
 ```
-.
-✅ Step 3: Send Email via Your Existing Service
----
 
-## **Future Enhancements**
-
-* Add pagination for patient and appointment endpoints.
-* Integrate Spring Security with JWT.
-* Add Swagger/OpenAPI documentation.
+🔐 To create a Gmail App Password:
+1. Go to: https://myaccount.google.com/apppasswords
+2. Generate an app password for Mail and "Other" app
+3. Save the 16-digit password (requires 2FA to be enabled)
 
 ---

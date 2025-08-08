@@ -6,12 +6,29 @@ INSERT INTO staff (name, email, phone, role, join_date, password) VALUES
 ('Dr. Robert Wilson', 'robert.wilson@hospital.com', '+1555666777', 'Doctor', '2018-11-05', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy');
 
 -- Insert mock patients
-INSERT INTO patients (name, age, sex, blood_group, is_active, email, password) VALUES
-('John Doe', 45, 'Male', 'A+', true, 'john.doe@hospital.com', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy'),
-('Jane Smith', 32, 'Female', 'B-', true, 'jane.smith@hospital.com', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy'),
-('Michael Johnson', 58, 'Male', 'O+', true, 'micheal.johnson@hospital.com', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy'),
-('Emily Williams', 29, 'Female', 'AB+', true, 'emily.williams@hospital.com', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy'),
-('David Brown', 63, 'Male', 'A-', true, 'david.brown@hospital.com', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy');
+INSERT INTO patients (name, age, sex, blood_group, is_active) VALUES
+('John Doe', 45, 'Male', 'A+', true),
+('Jane Smith', 32, 'Female', 'B-', true),
+('Michael Johnson', 58, 'Male', 'O+', true),
+('Emily Williams', 29, 'Female', 'AB+', true),
+('David Brown', 63, 'Male', 'A-', true);
+
+-- Insert mock healthcare proxies
+INSERT INTO healthcare_proxies (name, email, phone, relationship, password, patient_id) VALUES
+('Mary Doe', 'mary.doe@example.com', '+1234567891', 'Spouse', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 1),
+('John Smith', 'john.smith@example.com', '+1987654322', 'Child', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 2),
+('Lisa Johnson', 'lisa.johnson@example.com', '+1122334456', 'Sibling', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 3),
+('Robert Williams', 'robert.williams@example.com', '+1555666778', 'Parent', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 4),
+('Sarah Brown', 'sarah.brown@example.com', '+1999888777', 'Child', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 5);
+
+-- Insert patient-staff relationships
+INSERT INTO patient_staff (patient_id, staff_id) VALUES
+(1, 1), -- John Doe assigned to Dr. Sarah Johnson
+(1, 2), -- John Doe also assigned to Dr. Michael Brown
+(2, 1), -- Jane Smith assigned to Dr. Sarah Johnson
+(3, 3), -- Michael Johnson assigned to Nurse Emily Davis
+(4, 4), -- Emily Williams assigned to Dr. Robert Wilson
+(5, 2); -- David Brown assigned to Dr. Michael Brown
 
 -- Insert mock allergies
 INSERT INTO allergies (name, type, severity, reaction, noted_on, patient_id) VALUES
@@ -47,11 +64,13 @@ INSERT INTO appointments (patient_id, staff_id, time, status, notes, prescriptio
 (4, 4, '2023-05-16 13:30:00', 'Scheduled', 'Post-surgery follow-up', NULL),
 (5, 2, '2023-05-17 15:00:00', 'Cancelled', 'Patient rescheduled', NULL);
 
--- Insert mock messages
-INSERT INTO messages (text, is_user_message, timestamp, staff_id, patient_id) VALUES
-('Hello, how are you feeling today?', false, '2023-05-01 09:00:00', 1, 1),
-('I am feeling better, thank you.', true, '2023-05-01 09:05:00', 1, 1),
-('Please remember to take your medication.', false, '2023-05-02 10:00:00', 1, 1),
-('Your test results are ready.', false, '2023-05-03 11:30:00', 2, 1),
-('When is my next appointment?', true, '2023-05-04 12:15:00', 1, 2),
-('Your next appointment is on May 11 at 11 AM.', false, '2023-05-04 12:30:00', 1, 2);
+-- Insert mock messages (updated to include sender_type and healthcare_proxy_id)
+INSERT INTO messages (text, sender_type, timestamp, staff_id, patient_id, healthcare_proxy_id) VALUES
+('Hello, how are you feeling today?', 'STAFF', '2023-05-01 09:00:00', 1, 1, 1),
+('I am feeling better, thank you.', 'PATIENT_PROXY', '2023-05-01 09:05:00', 1, 1, 1),
+('Please remember to take your medication.', 'STAFF', '2023-05-02 10:00:00', 1, 1, 1),
+('Your test results are ready.', 'STAFF', '2023-05-03 11:30:00', 2, 2, 2),
+('When is my next appointment?', 'PATIENT_PROXY', '2023-05-04 12:15:00', 2, 2, 2),
+('Your next appointment is on May 11 at 11 AM.', 'STAFF', '2023-05-04 12:30:00', 2, 2, 2),
+('Should I bring any documents to the appointment?', 'PATIENT_PROXY', '2023-05-05 10:15:00', 3, 3, 3),
+('Please bring your insurance card and ID.', 'STAFF', '2023-05-05 10:30:00', 3, 3, 3);
