@@ -272,5 +272,3 @@ spring:
 1. Go to: https://myaccount.google.com/apppasswords
 2. Generate an app password for Mail and "Other" app
 3. Save the 16-digit password (requires 2FA to be enabled)
-
----
