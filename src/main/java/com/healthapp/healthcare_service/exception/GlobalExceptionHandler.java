@@ -71,9 +71,9 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
+    @ExceptionHandler(InvalidDataException.class)
     protected ResponseEntity<ApiErrorResponse> handleInvalidToken(
-            InvalidTokenException ex, WebRequest request) {
+            InvalidDataException ex, WebRequest request) {
 
         ApiErrorResponse errorResponse = new ApiErrorResponse(
                 HttpStatus.BAD_REQUEST,

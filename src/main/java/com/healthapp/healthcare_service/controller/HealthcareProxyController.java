@@ -1,8 +1,6 @@
 package com.healthapp.healthcare_service.controller;
 
-import com.healthapp.healthcare_service.dto.HealthcareProxyDto;
-import com.healthapp.healthcare_service.dto.MessageDto;
-import com.healthapp.healthcare_service.dto.PatientDto;
+import com.healthapp.healthcare_service.dto.*;
 import com.healthapp.healthcare_service.service.HealthcareProxyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Tag(name = "Healthcare Proxy", description = "Healthcare proxy management endpoints")
 @SecurityRequirement(name = "bearerAuth")
@@ -107,5 +107,19 @@ public class HealthcareProxyController {
             @Valid @RequestBody MessageDto messageDto,
             @AuthenticationPrincipal UserDetails userDetails) {
         return ResponseEntity.ok(proxyService.sendMessageToStaff(staffId, messageDto, userDetails.getUsername()));
+    }
+
+    @GetMapping("/patient/vitals-summary")
+    @Operation(summary = "Get vitals summary for assigned patient")
+    public ResponseEntity<VitalsSummaryDto> getVitalsSummary(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(proxyService.getVitalsSummary(userDetails.getUsername()));
+    }
+
+    @GetMapping("/patient/conversations")
+    @Operation(summary = "Get all conversations for assigned patient")
+    public ResponseEntity<List<ConversationDto>> getConversations(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(proxyService.getConversations(userDetails.getUsername()));
     }
 }

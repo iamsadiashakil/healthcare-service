@@ -1,15 +1,7 @@
 package com.healthapp.healthcare_service.controller;
 
-import com.healthapp.healthcare_service.dto.AuthRequest;
-import com.healthapp.healthcare_service.dto.AuthResponse;
-import com.healthapp.healthcare_service.dto.ForgotPasswordDto;
-import com.healthapp.healthcare_service.dto.PasswordResetDto;
-import com.healthapp.healthcare_service.entity.HealthcareProxy;
-import com.healthapp.healthcare_service.entity.Staff;
-import com.healthapp.healthcare_service.repository.HealthcareProxyRepository;
-import com.healthapp.healthcare_service.repository.StaffRepository;
-import com.healthapp.healthcare_service.service.PasswordService;
-import com.healthapp.healthcare_service.util.JwtUtil;
+import com.healthapp.healthcare_service.dto.*;
+import com.healthapp.healthcare_service.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,10 +11,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,12 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
-    private final HealthcareProxyRepository healthcareProxyRepository;
-    private final StaffRepository staffRepository;
-    private final PasswordService passwordService;
-
+    private final AuthService authService;
 
     @Operation(
             summary = "User login",
@@ -72,21 +55,8 @@ public class AuthController {
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest authRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authRequest.getEmail(),
-                        authRequest.getPassword()
-                )
-        );
-
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String jwt = jwtUtil.generateToken(userDetails);
-
-        // Determine user type
-        String userType = userDetails.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_STAFF")) ? "STAFF" : "PATIENT_PROXY";
-
-        return ResponseEntity.ok(new AuthResponse(jwt, userType));
+        AuthResponse authResponse = authService.login(authRequest);
+        return ResponseEntity.ok(authResponse);
     }
 
     @Operation(
@@ -116,21 +86,9 @@ public class AuthController {
             )
     })
     @PostMapping("/register/healthcare-proxy")
-    public ResponseEntity<AuthResponse> registerPatientProxy(@Valid @RequestBody AuthRequest authRequest) {
-        // Check if email exists
-        if (healthcareProxyRepository.findByEmail(authRequest.getEmail()).isPresent() ||
-                staffRepository.findByEmail(authRequest.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        HealthcareProxy healthcareProxy = new HealthcareProxy();
-        healthcareProxy.setEmail(authRequest.getEmail());
-        healthcareProxy.setPassword(authRequest.getPassword()); // Password will be encoded by service layer
-        // Set other healthcareProxy fields...
-
-        healthcareProxyRepository.save(healthcareProxy);
-
-        return login(authRequest);
+    public ResponseEntity<Void> registerPatientProxy(@Valid @RequestBody HealthcareProxyRegistrationDto registrationDto) {
+        authService.registerPatientProxy(registrationDto);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -164,21 +122,9 @@ public class AuthController {
             )
     })
     @PostMapping("/register/staff")
-    public ResponseEntity<AuthResponse> registerStaff(@Valid @RequestBody AuthRequest authRequest) {
-        // Check if email exists
-        if (healthcareProxyRepository.findByEmail(authRequest.getEmail()).isPresent() ||
-                staffRepository.findByEmail(authRequest.getEmail()).isPresent()) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        Staff staff = new Staff();
-        staff.setEmail(authRequest.getEmail());
-        staff.setPassword(authRequest.getPassword()); // Password will be encoded by service layer
-        // Set other staff fields...
-
-        staffRepository.save(staff);
-
-        return login(authRequest);
+    public ResponseEntity<Void> registerStaff(@Valid @RequestBody StaffRegistrationDto registrationDto) {
+        authService.registerStaff(registrationDto);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(
@@ -210,7 +156,7 @@ public class AuthController {
     })
     @PostMapping("/forgot-password")
     public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordDto request) {
-        passwordService.requestPasswordReset(request);
+        authService.requestPasswordReset(request);
         return ResponseEntity.ok().build();
     }
 
@@ -242,7 +188,7 @@ public class AuthController {
     })
     @PostMapping("/reset-password")
     public ResponseEntity<Void> resetPassword(@Valid @RequestBody PasswordResetDto resetDto) {
-        passwordService.resetPassword(resetDto);
+        authService.resetPassword(resetDto);
         return ResponseEntity.ok().build();
     }
 }
