@@ -23,7 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/proxies")
 public class HealthcareProxyController {
-    private final HealthcareProxyService proxyService;
+    private final HealthcareProxyService  proxyService;
 
     public HealthcareProxyController(HealthcareProxyService proxyService) {
         this.proxyService = proxyService;
