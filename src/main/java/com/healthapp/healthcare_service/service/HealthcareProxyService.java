@@ -1,14 +1,9 @@
 package com.healthapp.healthcare_service.service;
 
 import com.healthapp.healthcare_service.dto.*;
-import com.healthapp.healthcare_service.entity.HealthcareProxy;
-import com.healthapp.healthcare_service.entity.Message;
-import com.healthapp.healthcare_service.entity.Patient;
-import com.healthapp.healthcare_service.entity.Staff;
+import com.healthapp.healthcare_service.entity.*;
 import com.healthapp.healthcare_service.exception.ResourceNotFoundException;
-import com.healthapp.healthcare_service.mapper.HealthcareProxyMapper;
-import com.healthapp.healthcare_service.mapper.MessageMapper;
-import com.healthapp.healthcare_service.mapper.PatientMapper;
+import com.healthapp.healthcare_service.mapper.*;
 import com.healthapp.healthcare_service.repository.HealthcareProxyRepository;
 import com.healthapp.healthcare_service.repository.MessageRepository;
 import com.healthapp.healthcare_service.repository.StaffRepository;
@@ -32,9 +27,11 @@ public class HealthcareProxyService {
     private final StaffRepository staffRepository;
     private final VitalRepository vitalRepository;
 
+    private final AllergyMapper allergyMapper;
     private final HealthcareProxyMapper proxyMapper;
     private final PatientMapper patientMapper;
     private final MessageMapper messageMapper;
+    private final VitalMapper vitalMapper;
 
     public HealthcareProxyDto getProxyProfile(String email) {
         HealthcareProxy proxy = proxyRepository.findByEmail(email)
@@ -100,8 +97,11 @@ public class HealthcareProxyService {
             throw new ResourceNotFoundException("No patient assigned to this proxy");
         }
 
-        // 3. Get latest vitals for each type
-        Map<String, VitalDto> latestVitals = vitalRepository.findLatestReadingsByPatientId(patient.getId());
+        // 3. Get latest vitals
+        List<Vital> vitals = vitalRepository.findLatestReadingsByPatientId(patient.getId());
+        List<VitalDto> vitalDtos = vitalMapper.vitalListToVitalDtoList(vitals);
+        Map<String, VitalDto> latestVitals = vitalDtos.stream()
+                .collect(Collectors.toMap(VitalDto::getType, v -> v));
 
 
         // 4. Create and return DTO
@@ -110,7 +110,6 @@ public class HealthcareProxyService {
                 .lastUpdated(LocalDateTime.now().toString())
                 .build();
     }
-
 
 
     public List<ConversationDto> getConversations(String username) {
@@ -166,6 +165,20 @@ public class HealthcareProxyService {
         dto.setSenderType(message.getSenderType());
         dto.setTimestamp(message.getTimestamp());
         return dto;
+    }
+
+    public List<AllergyDto> getAllergies(String username) {
+        // 1. Get the healthcare proxy
+        HealthcareProxy proxy = proxyRepository.findByEmail(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Healthcare proxy not found"));
+
+        // 2. Get the associated patient
+        Patient assignedPatient = proxy.getPatient();
+        if (assignedPatient == null) {
+            throw new ResourceNotFoundException("No patient assigned to this proxy");
+        }
+
+        return assignedPatient.getAllergies().stream().map(allergyMapper::allergyToAllergyDto).toList();
     }
 
 }

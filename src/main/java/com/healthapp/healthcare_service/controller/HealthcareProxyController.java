@@ -116,6 +116,19 @@ public class HealthcareProxyController {
         return ResponseEntity.ok(proxyService.getVitalsSummary(userDetails.getUsername()));
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved patient allergies",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AllergyDto.class, type = "array"))),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - invalid or missing JWT"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - insufficient permissions"),
+            @ApiResponse(responseCode = "404", description = "Patient not found")
+    })
+    @GetMapping("/patient/allergies")
+    public ResponseEntity<List<AllergyDto>> getAllergies(@AuthenticationPrincipal UserDetails userDetails) {
+        return ResponseEntity.ok(proxyService.getAllergies(userDetails.getUsername()));
+    }
+
     @GetMapping("/patient/conversations")
     @Operation(summary = "Get all conversations for assigned patient")
     public ResponseEntity<List<ConversationDto>> getConversations(
