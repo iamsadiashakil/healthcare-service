@@ -1,5 +1,3 @@
-Here's the updated README.md file with the current API structure and endpoints:
-
 # Healthcare Service API
 
 The **Healthcare Service API** is a Spring Boot application that provides RESTful endpoints for a comprehensive healthcare management system, including authentication, patient management, staff management, and healthcare proxy functionality.
