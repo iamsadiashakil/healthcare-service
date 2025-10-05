@@ -10,27 +10,25 @@ http://localhost:8080/swagger-ui/index.html
 ```
 
 ---
+## **Role-Based Access Control**
+* Role: **PATIENT_PROXY**
+  * Access: Can only access endpoints under /api/proxies/ and view-only access to patient data
+
+* Role: **STAFF**
+  * Access: Full access to /api/staff/ endpoints and read access to patient data
+
+---
 
 ## **Authentication**
 
-### Login
+### Login (Both Apps)
+
 ```
 POST /api/auth/login
 ```
-Request:
-```json
-{
-  "email": "user@example.com",
-  "password": "password123"
-}
-```
-Response:
-```json
-{
-  "token": "jwt.token.here",
-  "userType": "STAFF|PATIENT_PROXY"
-}
-```
+
+* **Access**: Public
+* **Response**: Includes userType to determine which app to use
 
 ### Register Healthcare Proxy
 ```
@@ -104,15 +102,19 @@ Request:
 }
 ```
 
-### Get Assigned Patient
+### Get Patient Information
 ```
-GET /api/proxies/patient
+GET /api/proxies/patient              # Get assigned patient details
+GET /api/proxies/patient/allergies    # Get patient allergies
+GET /api/proxies/patient/vitals-summary # Get vitals overview
 ```
-Returns patient details assigned to the proxy
 
-### Send Message to Staff
+### Communication with Staff
 ```
-POST /api/proxies/patient/messages?staffId=1
+GET  /api/proxies/patient/conversations  # Get all conversations
+```
+```
+POST /api/proxies/patient/messages?staffId={id}  # Send message to staff
 ```
 Request:
 ```json
