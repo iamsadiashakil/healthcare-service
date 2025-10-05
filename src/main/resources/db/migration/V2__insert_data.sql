@@ -1,4 +1,5 @@
 -- Insert mock staff
+-- password for all staff is 123
 INSERT INTO staff (name, email, phone, role, join_date, password) VALUES
 ('Dr. Sarah Johnson', 'sarah.johnson@hospital.com', '+1234567890', 'Doctor', '2020-01-15', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy'),
 ('Dr. Michael Brown', 'michael.brown@hospital.com', '+1987654321', 'Doctor', '2019-05-20', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy'),
@@ -14,6 +15,7 @@ INSERT INTO patients (name, age, sex, blood_group, is_active) VALUES
 ('David Brown', 63, 'Male', 'A-', true);
 
 -- Insert mock healthcare proxies
+--password for all healthcare proxies is 123
 INSERT INTO healthcare_proxies (name, email, phone, relationship, password, patient_id) VALUES
 ('Mary Doe', 'mary.doe@example.com', '+1234567891', 'Spouse', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 1),
 ('John Smith', 'john.smith@example.com', '+1987654322', 'Child', '$2a$10$/cgtOfdpdeSkjTX2rlJw8.QXdy6EoF7Z11Qktx7cF4XdjXJd0tJuy', 2),
